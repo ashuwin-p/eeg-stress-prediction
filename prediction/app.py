@@ -30,10 +30,17 @@ def predict():
         df = pd.read_csv(file)
         prediction = predictor.predict(df)
 
-        if isinstance(prediction, np.ndarray):
-            prediction = prediction.tolist()
+        # Convert numpy float32 to native Python float for JSON serialization
+        if isinstance(prediction, dict):
+            prediction = {
+                "per_epoch_probabilities": [float(x) for x in prediction["per_epoch_probabilities"]],
+                "mean_stress_probability": float(prediction["mean_stress_probability"]),
+                "stress_ratio": float(prediction["stress_ratio"]),
+                "epoch_count": int(prediction["epoch_count"])
+            }
 
         return jsonify({'prediction': prediction})
+    
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 

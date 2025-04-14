@@ -30,18 +30,13 @@ def predict():
         df = pd.read_csv(file)
         prediction = predictor.predict(df)
 
-        # Convert to JSON serializable format
-        if isinstance(prediction, (np.ndarray, list)):
-            prediction = np.array(prediction).tolist()
-        elif isinstance(prediction, dict):
-            prediction = {k: float(v) if isinstance(v, (np.float32, np.float64)) else v
-                          for k, v in prediction.items()}
-        elif isinstance(prediction, (np.float32, np.float64)):
-            prediction = float(prediction)
+        if isinstance(prediction, np.ndarray):
+            prediction = prediction.tolist()
 
         return jsonify({'prediction': prediction})
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
 
 
 if __name__ == '__main__':

@@ -7,6 +7,7 @@ from FeatureExtractor import FeatureExtractor
 from DataLoader import EEGDataLoader
 from pathlib import Path
 from typing import Dict, List, Union
+import gc
 
 class ConfigWrapper:
     """Wrapper class to provide the expected interface for EEGDataLoader"""
@@ -60,6 +61,8 @@ class EEGStressPredictor:
         epochs = self.loader._create_epochs(clean_data)
         clean_epochs = self.loader._remove_bad_epochs(epochs)
         print(f"→ Clean epochs: {len(clean_epochs)}/{len(epochs)} retained")
+        del raw_data, clean_data, epochs
+        gc.collect()
         return clean_epochs
 
     def _extract_features(self, epochs: np.ndarray) -> np.ndarray:
@@ -67,6 +70,8 @@ class EEGStressPredictor:
         print("\n2. Feature Extraction")
         X = self.feature_extractor.extract_all_features(epochs)
         print(f"→ Feature matrix: {X.shape} (mean={np.mean(X):.2f} ± {np.std(X):.2f})")
+        del epochs
+        gc.collect()
         return X
 
     def _predict_probabilities(self, X: np.ndarray) -> np.ndarray:

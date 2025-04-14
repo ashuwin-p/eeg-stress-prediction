@@ -27,20 +27,12 @@ class EEGStressPredictor:
         "TP10", "CP6", "CP2", "C4", "T8", "FT10", "FC6", "FC2", "F4", "F8", "Fp2"
     ]
     
-    def __init__(self, model_path: Union[str, Path], scaler_path: Union[str, Path]):
+    def __init__(self, model: object, scaler: object):
         """Initialize predictor with trained model and scaler"""
-        self.model = self._load_pkl(model_path, "model")
-        self.scaler = self._load_pkl(scaler_path, "scaler")
+        self.model = model
+        self.scaler = scaler
         self.feature_extractor = FeatureExtractor()
         self.loader = self._initialize_loader()
-
-    def _load_pkl(self, path: Union[str, Path], obj_type: str) -> object:
-        """Safe loader for pickle files"""
-        print(f"Loading {obj_type} from {path}")
-        try:
-            return joblib.load(path)
-        except Exception as e:
-            raise ValueError(f"Failed to load {obj_type} from {path}: {str(e)}")
 
     def _initialize_loader(self) -> EEGDataLoader:
         """Configure and initialize EEG data loader"""
@@ -107,10 +99,12 @@ class EEGStressPredictor:
 if __name__ == "__main__":
     print("\n" + " EEG Stress Prediction Pipeline ".center(50, '='))
     
-    predictor = EEGStressPredictor(
-        model_path="best_xgboost_model.pkl",
-        scaler_path="scaler.pkl"
-    )
+    # Load model and scaler
+    model = joblib.load("best_xgboost_model.pkl")
+    scaler = joblib.load("scaler.pkl")
+
+    # Pass the loaded objects directly
+    predictor = EEGStressPredictor(model, scaler)
 
     results = predictor.predict_from_csv(r"U:\EEG-MUSI\data\converted_full_info\subject_211_pre.csv")
     

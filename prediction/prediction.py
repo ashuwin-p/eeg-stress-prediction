@@ -96,20 +96,28 @@ class EEGStressPredictor:
         plt.tight_layout()
         plt.show()
 
-if __name__ == "__main__":
-    print("\n" + " EEG Stress Prediction Pipeline ".center(50, '='))
-    
-    # Load model and scaler
-    model = joblib.load("best_xgboost_model.pkl")
-    scaler = joblib.load("scaler.pkl")
+    def predict(self, df: pd.DataFrame) -> Dict[str, float]:
+        """Direct prediction from a pandas DataFrame"""
+        # Save to temp file in memory (or implement full memory-based prediction)
+        temp_path = "temp_from_df.csv"
+        df.to_csv(temp_path, index=False)
+        return self.predict_from_csv(temp_path)
 
-    # Pass the loaded objects directly
-    predictor = EEGStressPredictor(model, scaler)
 
-    results = predictor.predict_from_csv(r"U:\EEG-MUSI\data\converted_full_info\subject_211_pre.csv")
+# if __name__ == "__main__":
+#     print("\n" + " EEG Stress Prediction Pipeline ".center(50, '='))
     
-    print("\n" + " Results ".center(50, '-'))
-    print(f"• Mean Stress Probability: {results['mean_stress_probability']:.1%}")
-    print(f"• Stress Epochs Ratio: {results['stress_ratio']:.1%}")
-    print(f"• Valid Epochs Analyzed: {results['epoch_count']}")
-    print("="*50)
+#     # Load model and scaler
+#     model = joblib.load("best_xgboost_model.pkl")
+#     scaler = joblib.load("scaler.pkl")
+
+#     # Pass the loaded objects directly
+#     predictor = EEGStressPredictor(model, scaler)
+
+#     results = predictor.predict_from_csv(r"U:\EEG-MUSI\data\converted_full_info\subject_211_pre.csv")
+    
+#     print("\n" + " Results ".center(50, '-'))
+#     print(f"• Mean Stress Probability: {results['mean_stress_probability']:.1%}")
+#     print(f"• Stress Epochs Ratio: {results['stress_ratio']:.1%}")
+#     print(f"• Valid Epochs Analyzed: {results['epoch_count']}")
+#     print("="*50)

@@ -28,7 +28,7 @@ def predict():
     try:
         df = pd.read_csv(file)
         prediction = predictor.predict(df)
-        return jsonify({'prediction': prediction.tolist()})
+        return jsonify({'prediction': prediction})
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
